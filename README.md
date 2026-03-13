@@ -61,4 +61,4 @@ Default prefix is `/usr/lib/` when omitted.
 
 ## License
 
-GPL-3.0
+AGPL-3.0-or-later
