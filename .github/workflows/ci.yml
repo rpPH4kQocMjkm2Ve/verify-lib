@@ -14,5 +14,5 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: make build
-      - run: bash tests/test.sh
-      - run: sudo bash tests/test.sh
+      - run: bash -x tests/test.sh
+      - run: sudo bash -x tests/test.sh
