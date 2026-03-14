@@ -29,3 +29,4 @@ jobs:
           name: verify-lib
       - run: chmod +x verify-lib
       - run: bash tests/test.sh
+      - run: sudo bash tests/test.sh
