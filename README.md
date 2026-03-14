@@ -1,5 +1,8 @@
 # verify-lib
 
+[![CI](https://github.com/rpPH4kQocMjkm2Ve/verify-lib/actions/workflows/ci.yml/badge.svg)](https://github.com/rpPH4kQocMjkm2Ve/verify-lib/actions/workflows/ci.yml)
+![License](https://img.shields.io/github/license/rpPH4kQocMjkm2Ve/verify-lib)
+
 Validates shell library files before sourcing. Compiled binary — breaks
 the bootstrap problem of verifying a shell library from shell.
 
