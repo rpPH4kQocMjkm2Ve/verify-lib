@@ -56,6 +56,7 @@ Default prefix is `/usr/lib/` when omitted.
 | `0:0` ownership | Unprivileged file replacement |
 | No group/other write | Unauthorized modification |
 | Directory chain ownership | Parent directory hijack |
+| Group-write on non-root dirs | Local group member planting files |
 | Sticky bit on world-writable dirs | `/tmp`-style race attacks |
 
 ## Dependencies
