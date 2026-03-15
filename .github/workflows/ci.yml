@@ -1,5 +1,18 @@
 name: CI
-on: [push, pull_request]
+
+on:
+  push:
+    paths:
+      - 'verify-lib.c'
+      - 'Makefile'
+      - 'tests/**'
+      - '.github/workflows/ci.yml'
+  pull_request:
+    paths:
+      - 'verify-lib.c'
+      - 'Makefile'
+      - 'tests/**'
+      - '.github/workflows/ci.yml'
 
 jobs:
   lint:
