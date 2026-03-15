@@ -33,6 +33,12 @@ static int verify_dir_chain(const char *path, const char *prefix)
             return 0;
         }
 
+        if ((st.st_mode & S_IWGRP) && st.st_gid != 0) {
+            fprintf(stderr, "verify-lib: %s group-writable with gid=%d\n",
+                    buf, st.st_gid);
+            return 0;
+        }
+
         if ((st.st_mode & S_IWOTH) && !(st.st_mode & S_ISVTX)) {
             fprintf(stderr, "verify-lib: %s world-writable without sticky\n",
                     buf);
