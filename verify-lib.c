@@ -68,7 +68,8 @@ static int verify_dir_chain(const char *path, const char *prefix,
         }
 
         if (st.st_uid != 0) {
-            if (!(userns && st.st_uid == overflow_uid && on_readonly_mount(buf))) {
+            if (!(userns && st.st_uid == overflow_uid
+                  && on_readonly_mount(buf))) {
                 fprintf(stderr, "verify-lib: %s uid=%d, expected 0\n",
                         buf, st.st_uid);
                 return 0;
@@ -76,15 +77,18 @@ static int verify_dir_chain(const char *path, const char *prefix,
         }
 
         if ((st.st_mode & S_IWGRP) && st.st_gid != 0) {
-            if (!(userns && st.st_gid == overflow_uid && on_readonly_mount(buf))) {
-                fprintf(stderr, "verify-lib: %s group-writable with gid=%d\n",
+            if (!(userns && st.st_gid == overflow_uid
+                  && on_readonly_mount(buf))) {
+                fprintf(stderr,
+                        "verify-lib: %s group-writable with gid=%d\n",
                         buf, st.st_gid);
                 return 0;
             }
         }
 
         if ((st.st_mode & S_IWOTH) && !(st.st_mode & S_ISVTX)) {
-            fprintf(stderr, "verify-lib: %s world-writable without sticky\n",
+            fprintf(stderr,
+                    "verify-lib: %s world-writable without sticky\n",
                     buf);
             return 0;
         }
@@ -118,7 +122,8 @@ int main(int argc, char *argv[])
     }
 
     if (strncmp(real, prefix, strlen(prefix)) != 0) {
-        fprintf(stderr, "verify-lib: %s resolves outside %s\n", file, prefix);
+        fprintf(stderr, "verify-lib: %s resolves outside %s\n",
+                file, prefix);
         free(real);
         return 1;
     }
@@ -138,11 +143,13 @@ int main(int argc, char *argv[])
     }
 
     if (st.st_uid != 0 || st.st_gid != 0) {
-        if (userns && st.st_uid == overflow_uid && st.st_gid == overflow_uid
+        if (userns && st.st_uid == overflow_uid
+            && st.st_gid == overflow_uid
             && on_readonly_mount(real)) {
             /* unmapped root on ro mount inside user ns */
         } else {
-            fprintf(stderr, "verify-lib: %s ownership %d:%d, expected 0:0\n",
+            fprintf(stderr,
+                    "verify-lib: %s ownership %d:%d, expected 0:0\n",
                     real, st.st_uid, st.st_gid);
             free(real);
             return 1;
@@ -150,8 +157,23 @@ int main(int argc, char *argv[])
     }
 
     if (st.st_mode & (S_IWGRP | S_IWOTH)) {
-        fprintf(stderr, "verify-lib: %s writable by non-root (mode=%04o)\n",
+        fprintf(stderr,
+                "verify-lib: %s writable by non-root (mode=%04o)\n",
                 real, st.st_mode & 07777);
+        free(real);
+        return 1;
+    }
+
+    /*
+     * In a non-init user namespace, virtual root (via --map-root-user)
+     * can create files that appear uid=0 on writable mounts.
+     * Only a read-only mount guarantees the contents were placed by
+     * real root and cannot be tampered with from inside the namespace.
+     */
+    if (userns && !on_readonly_mount(real)) {
+        fprintf(stderr,
+                "verify-lib: %s on writable mount in user ns\n",
+                real);
         free(real);
         return 1;
     }
